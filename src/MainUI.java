@@ -1,20 +1,24 @@
-import ui.Frame;
+import persistance.RequestDao;
+import persistance.RequestDaoJDBCImpl;
+import service.RequestFavoritingService;
+import service.SendRequestService;
+import ui.PaneManager;
 
 import java.net.URISyntaxException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class MainUI {
-    public static void main(String[] args) throws URISyntaxException {
-        Frame frame = new Frame();
-        frame.setVisible(true);
+    public static void main(String[] args) throws SQLException {
+        Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres");
+        RequestDao requestDao = new RequestDaoJDBCImpl(connection);
+        RequestFavoritingService favorittingService = new RequestFavoritingService(requestDao);
 
-
-//        HttpRequestProvider http = new JavaHttpRequestProvider();
-//
-//        HttpRequest req = HttpRequest.newBuilder(new URI("https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2014-01-01&endtime=2014-01-02")).build();
-//
-//        HttpResponse<String> response =  http.request(req);
-//
-//
-//        System.out.println(response.body());
+        PaneManager manager = new PaneManager(
+                favorittingService,
+                new SendRequestService()
+        );
+        manager.initializeFrame();
     }
 }

@@ -14,9 +14,13 @@ public class RequestFavoritingService {
         this.requestDao = requestDao;
     }
 
-    public void markAsFavorite(Request request) {
+    public void markAsFavorite(Request request) throws FavoriteRequestException {
         request.setAsFavorite();
-        requestDao.save(request);
+        try {
+            requestDao.save(request);
+        } catch (PersistanceException e) {
+            throw new FavoriteRequestException(e);
+        }
     }
 
     public void removeFromFavorites(Request request) {
