@@ -1,19 +1,17 @@
 package ui.actions;
 
-import ui.PaneManager;
+import ui.PanelManager;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeListener;
 
 public class SendRequest implements ActionListener {
-    PaneManager paneManager;
-    public SendRequest(PaneManager paneManager){
-        this.paneManager = paneManager;
+    PanelManager panelManager;
+    public SendRequest(PanelManager panelManager){
+        this.panelManager = panelManager;
     }
     @Override
     public void actionPerformed(ActionEvent e) {
-        paneManager.sendRequest();
+        panelManager.sendRequest();
     }
 }

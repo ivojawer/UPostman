@@ -1,32 +1,70 @@
 package ui;
 
 import domain.Request;
+import domain.RequestMethod;
 import service.RequestFavoritingService;
 import service.SendRequestService;
 import ui.actions.SendRequest;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
-public class PaneManager {
-
+public class PanelManager {
     RequestFavoritingService requestFavoritingService;
     SendRequestService sendRequestService;
+
+    Request currentRequest = new Request();
+    List<RequestObserver> observers = new ArrayList<>();
+    JFrame frame;
     Response response;
 
-    public PaneManager(RequestFavoritingService requestFavoritingService, SendRequestService sendRequestService) {
+    public PanelManager(RequestFavoritingService requestFavoritingService, SendRequestService sendRequestService) {
         this.requestFavoritingService = requestFavoritingService;
         this.sendRequestService = sendRequestService;
+
+    }
+
+    public void sendRequest() {
+        String res = this.sendRequestService.send(currentRequest);
+        response.setContent(res);
+    }
+
+    public void notifyObservers(){
+        for(RequestObserver observer : observers){
+            observer.notify(currentRequest);
+        }
+    }
+
+    public void subscribeToCurrentRequest(RequestObserver observer){
+        observers.add(observer);
+    }
+
+    public void setURI(String newURI) {
+        try {
+            URI uri = new URI(newURI);
+            if(uri.getQuery() != null) {
+               currentRequest.setParameters(uri.getQuery());
+            }
+            currentRequest.setPath(newURI.split("\\?")[0]);
+            notifyObservers();
+        } catch (Exception e) {
+            System.out.println("Invalid URI: " + newURI);
+        }
+    }
+
+    public void selectMethod(String method){
+        currentRequest.setMethod(RequestMethod.valueOf(method));
     }
 
     public void initializeFrame(){
 
 
-        JFrame frame = new JFrame();
-        frame.setName("UPostman");
-        frame.getContentPane().setLayout(new BorderLayout(10, 10));
+        frame = new JFrame();
+        frame.setTitle("UPostman");
+        frame.getContentPane().setLayout(new BorderLayout(5, 5));
 
 
         JPanel favorites = new JPanel();
@@ -49,11 +87,14 @@ public class PaneManager {
         JPanel topRowRequest = new JPanel(new FlowLayout(FlowLayout.CENTER));
         topRowRequest.setPreferredSize(new Dimension(400, 90));
         request.add(topRowRequest);
-        JTextField uri = new UriInput();//creating instance of JButton
+        UriInput uri = new UriInput(this);
+        this.subscribeToCurrentRequest(uri);
         uri.setPreferredSize(new Dimension(300,40));
         topRowRequest.add(uri);
 
         JComboBox<String> methodSelector = new JComboBox<>(new String[]{"GET", "POST", "PUT", "DELETE"});
+
+        methodSelector.addActionListener(e-> selectMethod((String) methodSelector.getSelectedItem()));
         topRowRequest.add(methodSelector);
 
         SendRequestButton sendButton = new SendRequestButton();
@@ -61,7 +102,8 @@ public class PaneManager {
         sendButton.setSize(50, 40);
         topRowRequest.add(sendButton);
 
-        NameValueGrid parameters = new NameValueGrid("Query Parameters");
+        ParametersGrid parameters = new ParametersGrid("Query Parameters");
+        subscribeToCurrentRequest(parameters);
         NameValueGrid headers = new NameValueGrid("Headers");
 
         request.add(parameters);
@@ -74,7 +116,7 @@ public class PaneManager {
         favoritesLabel.setHorizontalAlignment(SwingConstants.CENTER);
         favorites.add(favoritesLabel);
 
-        JLabel historyLabel =new JLabel("Historial");
+        JLabel historyLabel = new JLabel("Historial");
         historyLabel.setHorizontalAlignment(SwingConstants.CENTER);
         history.add(historyLabel);
 
@@ -85,19 +127,10 @@ public class PaneManager {
         }
 
 
-
-
-
         frame.add(favoritesScroll, BorderLayout.LINE_START);
         frame.add(request, BorderLayout.CENTER);
         frame.add(historyScroll, BorderLayout.LINE_END);
         frame.setSize(900,600);
         frame.setVisible(true);
-    }
-
-    public void sendRequest(){
-        String res = this.sendRequestService.send(new Request(1, "hola"));
-        response.setContent(res);
-
     }
 }

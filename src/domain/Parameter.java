@@ -10,7 +10,30 @@ public class Parameter {
         this.value = value;
     }
 
+    public Parameter(String rawParameter) throws URIParseException {
+        String[] splitParam = rawParameter.split("=");
+        if(splitParam.length != 2){
+            throw new URIParseException("Argument was not a valid parameter");
+        }
+        name = splitParam[0];
+        value = splitParam[1];
+
+    }
+
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public String toURIQueryParam() {
+        // ToDo sanitize
+        return name + "=" + value;
     }
 }

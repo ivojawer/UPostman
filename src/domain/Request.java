@@ -1,9 +1,9 @@
 package domain;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class Request {
     private Integer id;
@@ -11,19 +11,30 @@ public class Request {
     private final List<Header> headers;
     private final List<Parameter> parameters;
     private RequestMethod method;
-    private Boolean favorite;
-    private String uri;
+    private Boolean isFavorite;
+    private String path;
 
+
+    public Request() {
+        headers = new ArrayList<>();
+        parameters = new ArrayList<>();
+        path = "";
+        isFavorite = false;
+    }
 
     public Request(Integer id, String name) {
-        this.headers = new ArrayList<>();
-        this.parameters = new ArrayList<>();
+        this();
         this.id = id;
         this.name = name;
     }
 
     public String getURI() {
-        return  "https://cat-fact.herokuapp.com/facts";
+        Optional<String> paramsOpt =
+                parameters
+                        .stream()
+                        .map(Parameter::toURIQueryParam)
+                        .reduce((String p1, String p2) -> p1.concat("&").concat(p2));
+        return paramsOpt.map(params -> path + "?" + params).orElseGet(() -> path);
     }
 
     public Integer getId() {
@@ -35,10 +46,47 @@ public class Request {
     }
 
     public void setAsFavorite() {
-        favorite = true;
+        isFavorite = true;
     }
 
     public String getName() {
         return name;
+    }
+
+    public List<Parameter> getParameters() {
+        return parameters;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public void setParameters(List<Parameter> parameters) {
+        this.parameters.clear();
+        this.parameters.addAll(parameters);
+    }
+
+    /**
+     * @param rawQueryParams the raw string of the query params sections (e.g. "key1=value1&key2=value2")
+     */
+    public void setParameters(String rawQueryParams) throws URIParseException {
+        List<Parameter> newParameters = new ArrayList<>();
+        try{
+            for(String param : rawQueryParams.split("&")){
+                newParameters.add(new Parameter(param));
+            }
+        } catch (Exception e){
+            throw new URIParseException(e);
+        }
+
+        setParameters(newParameters);
+    }
+
+    public void addParameter(Parameter parameter) {
+        parameters.add(parameter);
+    }
+
+    public void setMethod(RequestMethod method) {
+        this.method = method;
     }
 }

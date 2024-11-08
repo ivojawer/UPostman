@@ -2,9 +2,8 @@ import persistance.RequestDao;
 import persistance.RequestDaoJDBCImpl;
 import service.RequestFavoritingService;
 import service.SendRequestService;
-import ui.PaneManager;
+import ui.PanelManager;
 
-import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -15,7 +14,7 @@ public class MainUI {
         RequestDao requestDao = new RequestDaoJDBCImpl(connection);
         RequestFavoritingService favorittingService = new RequestFavoritingService(requestDao);
 
-        PaneManager manager = new PaneManager(
+        PanelManager manager = new PanelManager(
                 favorittingService,
                 new SendRequestService()
         );
