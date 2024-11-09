@@ -8,7 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Response extends JPanel {
-    JTextPane content;
+    JTextArea content;
     public Response(){
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
@@ -16,10 +16,10 @@ public class Response extends JPanel {
         header.add(new JLabel("Response"));
         header.add(new JComboBox<>(new String[]{"JSON", "XML"}));
 
-        content = new JTextPane();
+        content = new JTextArea();
+        content.setLineWrap(true);
         content.setText("");
         content.setEditable(false);
-        content.setContentType("text/plain");
         content.setPreferredSize(new Dimension(300, 900));
 
         add(header);

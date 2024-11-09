@@ -10,13 +10,8 @@ import java.sql.SQLException;
 public class RequestMapper implements JDBCRowMapper<Request> {
     @Override
     public Request mapRow(ResultSet rs) throws PersistanceException {
-        try{
-            Request request = new Request(rs.getInt("id"), rs.getString("name"));
+            Request request = new Request();
             //ToDo hydrate parameters
             return request;
-        }
-        catch (SQLException e) {
-            throw new PersistanceException(e);
-        }
     }
 }

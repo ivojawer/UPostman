@@ -32,7 +32,8 @@ public class RequestFavoritingService {
     public List<Request> getFavorites() throws FavoriteRequestException {
         List<Request> favorites = new ArrayList<>();
         for(int i = 0; i<5; i++){
-            Request req =new Request(i, "Request #"+ i+1);
+            Request req =new Request();
+            req.setPath("www.hola.com");
             favorites.add(req);
         }
 

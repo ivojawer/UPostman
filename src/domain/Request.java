@@ -1,32 +1,32 @@
 package domain;
 
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class Request {
     private Integer id;
-    private String name;
     private final List<Header> headers;
     private final List<Parameter> parameters;
     private RequestMethod method;
     private Boolean isFavorite;
     private String body;
     private String path;
-
+    private LocalDateTime lastSent;
 
     public Request() {
         headers = new ArrayList<>();
         parameters = new ArrayList<>();
         path = "";
         isFavorite = false;
+        body = "";
     }
 
-    public Request(Integer id, String name) {
+    public Request(Integer id) {
         this();
         this.id = id;
-        this.name = name;
     }
 
     public String getURI() {
@@ -48,10 +48,6 @@ public class Request {
 
     public void setAsFavorite() {
         isFavorite = true;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public List<Parameter> getParameters() {
@@ -104,7 +100,35 @@ public class Request {
         return body;
     }
 
+    public void setBody(String body) {
+        this.body = body;
+    }
+
     public List<Header> getHeaders() {
         return headers;
+    }
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.isFavorite = favorite;
+    }
+
+    public String getPath(){
+        return path;
+    }
+
+    public void registerSendTime(){
+        lastSent = LocalDateTime.now();
+    }
+
+    public LocalDateTime getLastSent() {
+        return lastSent;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }

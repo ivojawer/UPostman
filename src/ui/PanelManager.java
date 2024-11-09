@@ -10,8 +10,9 @@ import service.SendRequestService;
 import ui.actions.SendRequest;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,6 +74,10 @@ public class PanelManager {
         this.notifyObservers();
     }
 
+    public void setBody(String body){
+        this.currentRequest.setBody(body);
+    }
+
     public void initializeFrame(){
 
 
@@ -107,8 +112,9 @@ public class PanelManager {
         topRowRequest.add(uri);
 
         JComboBox<String> methodSelector = new JComboBox<>(new String[]{"GET", "POST", "PUT", "DELETE"});
-
+        currentRequest.setMethod(RequestMethod.GET);
         methodSelector.addActionListener(e-> selectMethod((String) methodSelector.getSelectedItem()));
+
         topRowRequest.add(methodSelector);
 
         SendRequestButton sendButton = new SendRequestButton();
@@ -118,10 +124,32 @@ public class PanelManager {
 
         ParametersGrid parameters = new ParametersGrid("Query Parameters", this);
         subscribeToCurrentRequest(parameters);
-//        NameValueGrid headers = new NameValueGrid("Headers");
+        NameValueGrid<Header> headers = new HeadersGrid("Headers", this);
+
+        request.add(new JLabel("Body"));
+        JTextArea body = new JTextArea();
+        body.getDocument().addDocumentListener(
+            new DocumentListener() {
+                @Override
+                public void insertUpdate(DocumentEvent e) {
+                    setBody(body.getText());
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+                    setBody(body.getText());
+                }
+
+                @Override
+                public void changedUpdate(DocumentEvent e) {
+                    setBody(body.getText());
+                }
+            }
+        );
+        request.add(body);
 
         request.add(parameters);
-//        request.add(headers);
+        request.add(headers);
 
         response = new Response();
         request.add(response);

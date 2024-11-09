@@ -9,8 +9,7 @@ public class FavoriteRequest extends JPanel {
     public FavoriteRequest(Request request) {
         this.request = request;
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        this.add(new JLabel(request.getName()));
-        this.add(new JLabel(request.getId().toString()));
+        this.add(new JLabel(request.getPath()));
         this.add(new JButton("Cargar"));
     }
 }

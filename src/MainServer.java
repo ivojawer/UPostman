@@ -1,4 +1,8 @@
+import domain.Header;
+import domain.Parameter;
 import domain.Request;
+import persistance.KeyValueDao;
+import persistance.KeyValueJDBCImplDao;
 import persistance.RequestDao;
 import persistance.RequestDaoJDBCImpl;
 import service.FavoriteRequestException;
@@ -12,9 +16,11 @@ import java.sql.SQLException;
 public class MainServer {
     public static void main(String[] args) throws SQLException, FavoriteRequestException {
         Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres");
-        RequestDao requestDao = new RequestDaoJDBCImpl(connection);
+        KeyValueDao<Header> headerDao = new KeyValueJDBCImplDao<>(connection,"key", "value", "Header");
+        KeyValueDao<Parameter> parameterDao = new KeyValueJDBCImplDao<>(connection,"name", "value", "Parameter");
+        RequestDao requestDao = new RequestDaoJDBCImpl(connection,headerDao, parameterDao);
         RequestFavoritingService favorittingService = new RequestFavoritingService(requestDao);
 
-        favorittingService.getFavorites().stream().map(Request::getName).forEach(System.out::println);
+        favorittingService.getFavorites().stream().map(Request::getPath).forEach(System.out::println);
     }
 }
