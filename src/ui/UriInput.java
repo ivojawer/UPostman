@@ -14,7 +14,7 @@ public class UriInput extends javax.swing.JTextField implements RequestObserver 
         super(30);
         this.panelManager = panelManager;
         this.setFont(new FontUIResource("Arial", FontUIResource.PLAIN, 15));
-        this.listening = false;
+        this.listening = true;
         this.getDocument().addDocumentListener(
             new DocumentListener() {
 
@@ -43,7 +43,7 @@ public class UriInput extends javax.swing.JTextField implements RequestObserver 
     }
 
     @Override
-    public void notify(Request newRequest) {
+    public void newRequest(Request newRequest) {
         if(listening){
             this.setText(newRequest.getURI());
         }

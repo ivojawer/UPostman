@@ -11,12 +11,23 @@ public class Parameter {
     }
 
     public Parameter(String rawParameter) throws URIParseException {
-        String[] splitParam = rawParameter.split("=");
-        if(splitParam.length != 2){
-            throw new URIParseException("Argument was not a valid parameter");
+        name = "";
+        value = "";
+        boolean beenThrowEquals = false;
+
+        for (int i = 0; i < rawParameter.length(); i++) {
+            char c = rawParameter.charAt(i);
+            if (c == '='){
+                beenThrowEquals = true;
+            } else {
+                if(!beenThrowEquals){
+                    name += c;
+                } else {
+                    value += c;
+                }
+            }
         }
-        name = splitParam[0];
-        value = splitParam[1];
+
 
     }
 

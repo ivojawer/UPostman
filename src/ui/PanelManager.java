@@ -1,7 +1,10 @@
 package ui;
 
+import domain.Header;
+import domain.Parameter;
 import domain.Request;
 import domain.RequestMethod;
+import service.FavoriteRequestException;
 import service.RequestFavoritingService;
 import service.SendRequestService;
 import ui.actions.SendRequest;
@@ -34,7 +37,7 @@ public class PanelManager {
 
     public void notifyObservers(){
         for(RequestObserver observer : observers){
-            observer.notify(currentRequest);
+            observer.newRequest(currentRequest);
         }
     }
 
@@ -44,11 +47,13 @@ public class PanelManager {
 
     public void setURI(String newURI) {
         try {
-            URI uri = new URI(newURI);
-            if(uri.getQuery() != null) {
-               currentRequest.setParameters(uri.getQuery());
+            String[] uri = newURI.split("\\?");
+            if(uri.length > 1) {
+               currentRequest.setParameters(uri[1]);
+            } else {
+                currentRequest.clearParameters();
             }
-            currentRequest.setPath(newURI.split("\\?")[0]);
+            currentRequest.setPath(uri[0]);
             notifyObservers();
         } catch (Exception e) {
             System.out.println("Invalid URI: " + newURI);
@@ -57,6 +62,15 @@ public class PanelManager {
 
     public void selectMethod(String method){
         currentRequest.setMethod(RequestMethod.valueOf(method));
+    }
+
+    public void setHeaders(List<Header> headers){
+        this.currentRequest.setHeaders(headers);
+    }
+
+    public void setParameters(List<Parameter> parameters){
+        this.currentRequest.setParameters(parameters);
+        this.notifyObservers();
     }
 
     public void initializeFrame(){
@@ -80,7 +94,7 @@ public class PanelManager {
         history.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
 
         JScrollPane historyScroll = new JScrollPane(history, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        JScrollPane favoritesScroll =new JScrollPane(favorites, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane favoritesScroll = new JScrollPane(favorites, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
 
 
@@ -102,12 +116,12 @@ public class PanelManager {
         sendButton.setSize(50, 40);
         topRowRequest.add(sendButton);
 
-        ParametersGrid parameters = new ParametersGrid("Query Parameters");
+        ParametersGrid parameters = new ParametersGrid("Query Parameters", this);
         subscribeToCurrentRequest(parameters);
-        NameValueGrid headers = new NameValueGrid("Headers");
+//        NameValueGrid headers = new NameValueGrid("Headers");
 
         request.add(parameters);
-        request.add(headers);
+//        request.add(headers);
 
         response = new Response();
         request.add(response);
@@ -120,10 +134,15 @@ public class PanelManager {
         historyLabel.setHorizontalAlignment(SwingConstants.CENTER);
         history.add(historyLabel);
 
-        for(int i = 0; i<5; i++){
-            Request req =new Request(i, "Request #"+ i+1);
-            favorites.add(new FavoriteRequest(req));
-            history.add(new FavoriteRequest(req));
+
+        try {
+            requestFavoritingService.getFavorites().forEach(req -> {
+                favorites.add(new FavoriteRequest(req));
+                history.add(new FavoriteRequest(req));
+            });
+        } catch (FavoriteRequestException e) {
+            // ToDo handle
+            throw new RuntimeException(e);
         }
 
 

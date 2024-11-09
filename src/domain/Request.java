@@ -12,6 +12,7 @@ public class Request {
     private final List<Parameter> parameters;
     private RequestMethod method;
     private Boolean isFavorite;
+    private String body;
     private String path;
 
 
@@ -82,11 +83,28 @@ public class Request {
         setParameters(newParameters);
     }
 
-    public void addParameter(Parameter parameter) {
-        parameters.add(parameter);
-    }
-
     public void setMethod(RequestMethod method) {
         this.method = method;
+    }
+
+    public void setHeaders(List<Header> headers) {
+        this.headers.clear();
+        this.headers.addAll(headers);
+    }
+
+    public void clearParameters() {
+        parameters.clear();
+    }
+
+    public RequestMethod getMethod() {
+        return method;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public List<Header> getHeaders() {
+        return headers;
     }
 }

@@ -4,6 +4,6 @@ import domain.Request;
 
 public interface RequestObserver {
 
-    void notify(Request newRequest);
+    void newRequest(Request newRequest);
 
 }
