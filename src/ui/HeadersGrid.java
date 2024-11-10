@@ -24,9 +24,8 @@ public class HeadersGrid extends KeyValueGrid<Header> {
     }
 
     @Override
-    protected void loadNewRequest(Request newRequest) {
-        for(Header header: newRequest.getHeaders()){
-            addRow(header.getKey(), header.getValue());
-        }
+    protected List<Header> newRequestRows(Request newRequest) {
+        return newRequest.getHeaders();
     }
+
 }

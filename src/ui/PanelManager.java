@@ -56,7 +56,7 @@ public class PanelManager {
         try {
             String[] uri = newURI.split("\\?");
             if(uri.length > 1) {
-               currentRequest.setParameters(uri[1]);
+                currentRequest.setParameters(uri[1]);
             } else {
                 currentRequest.clearParameters();
             }

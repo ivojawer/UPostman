@@ -41,10 +41,6 @@ public class Request {
         return id;
     }
 
-    public boolean isPersisted() {
-        return id != null;
-    }
-
     public void setAsFavorite() {
         isFavorite = true;
     }

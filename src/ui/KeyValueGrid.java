@@ -1,5 +1,6 @@
 package ui;
 
+import domain.KeyValueEntity;
 import domain.Request;
 
 import javax.swing.*;
@@ -9,10 +10,10 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class KeyValueGrid<T> extends JPanel implements RequestObserver {
+public abstract class KeyValueGrid<T extends KeyValueEntity> extends JPanel implements RequestObserver {
     protected JPanel grid;
-    protected final Integer columnsPerGrid = 3;
     protected Boolean listening = true;
+    protected Boolean takeNewRequests = true;
 
     KeyValueGrid(String title){
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -43,14 +44,14 @@ public abstract class KeyValueGrid<T> extends JPanel implements RequestObserver 
     public void reactToChange() {
         if(listening){
             List<T> rows = new ArrayList<>();
-            for(int i = 0; i<grid.getComponentCount(); i++){
+            for(int i = 0; i < grid.getComponentCount(); i++){
                 JPanel row = (JPanel) grid.getComponent(i);
                 JTextField name = (JTextField)row.getComponent(0);
                 JTextField value = (JTextField)row.getComponent(1);
                 rows.add(mapRow(name.getText(), value.getText()));
             }
+
             notifyNewRows(rows);
-            grid.getComponentCount();
         }
     }
 
@@ -103,12 +104,32 @@ public abstract class KeyValueGrid<T> extends JPanel implements RequestObserver 
 
     @Override
     public void newRequest(Request newRequest) {
-        grid.removeAll();
-        listening = false;
-        this.loadNewRequest(newRequest);
-        listening = true;
-        updateUI();
+        if(takeNewRequests){
+            listening = false;
+            List<T> rows = this.newRequestRows(newRequest);
+
+            if(grid.getComponentCount() > rows.size()){
+                grid.removeAll();
+            }
+            for(int i = 0; i<rows.size(); i++){
+                if(grid.getComponentCount() > i){
+                    JPanel row = (JPanel) grid.getComponent(i);
+                    JTextField name = (JTextField)row.getComponent(0);
+                    JTextField value = (JTextField)row.getComponent(1);
+                    name.setText(rows.get(i).getKey());
+                    value.setText(rows.get(i).getValue());
+                } else {
+                    addRow(rows.get(i).getKey(), rows.get(i).getValue());
+                }
+            }
+            updateUI();
+    //        grid.removeAll();
+    //        for(T row : this.newRequestRows(newRequest)){
+    //            addRow(row.getKey(), row.getValue());
+    //        }
+            listening = true;
+        }
     }
 
-    protected abstract void loadNewRequest(Request newRequest);
+    protected abstract List<T> newRequestRows(Request newRequest);
 }

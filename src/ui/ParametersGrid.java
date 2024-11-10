@@ -20,16 +20,14 @@ public class ParametersGrid extends KeyValueGrid<Parameter> {
 
     @Override
     public void notifyNewRows(List<Parameter> rows) {
-        listening = false;
+        takeNewRequests = false;
         panelManager.setParameters(rows);
-        listening = true;
+        takeNewRequests = true;
     }
 
     @Override
-    protected void loadNewRequest(Request newRequest) {
-        for(Parameter param : newRequest.getParameters()){
-            addRow(param.getName(), param.getValue());
-        }
+    protected List<Parameter> newRequestRows(Request newRequest) {
+        return newRequest.getParameters();
     }
 
 }

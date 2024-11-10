@@ -9,30 +9,31 @@ import javax.swing.plaf.FontUIResource;
 public class UriInput extends javax.swing.JTextField implements RequestObserver {
     Boolean listening;
     PanelManager panelManager;
+    DocumentListener documentListener;
 
     public UriInput(PanelManager panelManager) {
         super(30);
         this.panelManager = panelManager;
         this.setFont(new FontUIResource("Arial", FontUIResource.PLAIN, 15));
         this.listening = true;
-        this.getDocument().addDocumentListener(
-            new DocumentListener() {
-
-                @Override
-                public void insertUpdate(DocumentEvent e) {
-                    reactToChange();
-                }
-
-                @Override
-                public void removeUpdate(DocumentEvent e) {
-                    reactToChange();
-                }
-
-                @Override
-                public void changedUpdate(DocumentEvent e) {
-                    reactToChange();
-                }
+        documentListener = new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                reactToChange();
             }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                reactToChange();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                reactToChange();
+            }
+        };
+        this.getDocument().addDocumentListener(
+            documentListener
         );
     }
 
@@ -45,7 +46,9 @@ public class UriInput extends javax.swing.JTextField implements RequestObserver 
     @Override
     public void newRequest(Request newRequest) {
         if(listening){
+            this.getDocument().removeDocumentListener(documentListener);
             this.setText(newRequest.getURI());
+            this.getDocument().addDocumentListener(documentListener);
         }
     }
 }
