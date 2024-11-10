@@ -13,16 +13,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PanelManager {
-    RequestFavoritingService requestFavoritingService;
-    SendRequestService sendRequestService;
-    RequestHistoryService requestHistoryService;
+    private RequestFavoritingService requestFavoritingService;
+    private SendRequestService sendRequestService;
+    private RequestHistoryService requestHistoryService;
 
-    Request currentRequest = new Request();
-    List<RequestObserver> observers = new ArrayList<>();
-    JFrame frame;
-    Response response;
-    LoadableRequestList history;
-    LoadableRequestList favorites;
+    private Request currentRequest = new Request();
+    private List<RequestObserver> observers = new ArrayList<>();
+    private JFrame frame;
+    private Response response;
+    private LoadableRequestList history;
+    private LoadableRequestList favorites;
 
     public PanelManager(RequestFavoritingService requestFavoritingService, SendRequestService sendRequestService, RequestHistoryService requestHistoryService) {
         this.requestFavoritingService = requestFavoritingService;
@@ -32,9 +32,14 @@ public class PanelManager {
     }
 
     public void sendRequest() {
-        domain.response.Response res = this.sendRequestService.send(currentRequest);
-        response.setContent(res);
-        getHistory();
+        domain.response.Response res = null;
+        try {
+            res = this.sendRequestService.send(currentRequest);
+            response.setContent(res);
+            getHistory();
+        } catch (SendRequestException e) {
+            displayExceptionDialog(e);
+        }
     }
 
     public void notifyObservers(){
@@ -85,6 +90,10 @@ public class PanelManager {
         this.currentRequest.setBody(body);
     }
 
+    public void displayExceptionDialog(Exception e) {
+        JOptionPane.showMessageDialog(frame, e.getMessage(), "Oops, algo salio mal", JOptionPane.ERROR_MESSAGE);
+    }
+
     public void initializeFrame(){
         frame = new JFrame();
         frame.setTitle("UPostman");
@@ -112,8 +121,7 @@ public class PanelManager {
                 requestFavoritingService.addToFavorites(currentRequest);
                 getFavorites();
             } catch (FavoriteRequestException ex) {
-                // ToDo
-                throw new RuntimeException(ex);
+                displayExceptionDialog(ex);
             }
         });
         topRowRequest.add(saveButton);
@@ -167,8 +175,7 @@ public class PanelManager {
         try {
             favorites.loadRequests(requestFavoritingService.getFavorites());
         } catch (FavoriteRequestException e) {
-            //ToDo
-            throw new RuntimeException(e);
+            displayExceptionDialog(e);
         }
     }
 
@@ -176,8 +183,7 @@ public class PanelManager {
         try {
             history.loadRequests(requestHistoryService.getHistory());
         } catch (RequestHistoryException e) {
-            //ToDo
-            throw new RuntimeException(e);
+            displayExceptionDialog(e);
         }
     }
 }

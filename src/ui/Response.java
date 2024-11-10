@@ -7,7 +7,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Response extends JPanel {
-    JComponent content;
+    private JComponent content;
+
     public Response(){
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 

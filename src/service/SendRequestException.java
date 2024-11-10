@@ -1,7 +1,7 @@
 package service;
 
-public class SendRequestException extends RuntimeException {
-    public SendRequestException(Exception e) {
-        super(e);
+public class SendRequestException extends Exception {
+    public SendRequestException(String msg) {
+        super(msg);
     }
 }

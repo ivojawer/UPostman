@@ -6,10 +6,10 @@ import java.sql.Connection;
 import java.util.List;
 
 public class KeyValueJDBCImplDao<T extends KeyValueEntity> extends JDBCDao implements KeyValueDao<T> {
-    String keyColumn;
-    String valueColumn;
-    String table;
-    JDBCRowMapper<T> mapper;
+    private final String keyColumn;
+    private final String valueColumn;
+    private final String table;
+    private final JDBCRowMapper<T> mapper;
 
     public KeyValueJDBCImplDao(Connection connection, String valueColumn, String keyColumn, String table, JDBCRowMapper<T> mapper) {
         super(connection);

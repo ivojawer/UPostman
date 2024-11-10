@@ -11,8 +11,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class RequestDaoJDBCImpl extends JDBCDao implements RequestDao {
-    KeyValueDao<Header> headerDao;
-    KeyValueDao<Parameter> parameterDao;
+    private final KeyValueDao<Header> headerDao;
+    private final KeyValueDao<Parameter> parameterDao;
 
     public RequestDaoJDBCImpl(Connection connection,KeyValueDao<Header> headerDao,KeyValueDao<Parameter> parameterDao) {
         super(connection);

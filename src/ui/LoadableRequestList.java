@@ -11,8 +11,9 @@ import java.util.List;
 import java.util.Map;
 
 public class LoadableRequestList extends JPanel {
-    JPanel list;
-    PanelManager panelManager;
+    private JPanel list;
+    private PanelManager panelManager;
+
     public LoadableRequestList(PanelManager panelManager, String title){
         this.panelManager = panelManager;
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));

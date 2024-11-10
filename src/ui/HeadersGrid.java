@@ -5,8 +5,8 @@ import domain.Request;
 
 import java.util.List;
 
-public class HeadersGrid extends NameValueGrid<Header> {
-    PanelManager panelManager;
+public class HeadersGrid extends KeyValueGrid<Header> {
+    private PanelManager panelManager;
 
     public HeadersGrid(String title, PanelManager panelManager) {
         super(title);

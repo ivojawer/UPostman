@@ -1,16 +1,13 @@
 package persistance;
 
-import domain.Request;
-
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 public class JDBCDao {
-    Connection connection;
+    private final Connection connection;
 
     public JDBCDao(Connection connection) {
         this.connection = connection;

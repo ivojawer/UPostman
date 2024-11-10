@@ -1,6 +1,5 @@
 package ui;
 
-import domain.Parameter;
 import domain.Request;
 
 import javax.swing.*;
@@ -10,12 +9,12 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class NameValueGrid<T> extends JPanel implements RequestObserver {
+public abstract class KeyValueGrid<T> extends JPanel implements RequestObserver {
     protected JPanel grid;
     protected final Integer columnsPerGrid = 3;
     protected Boolean listening = true;
 
-    NameValueGrid(String title){
+    KeyValueGrid(String title){
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         JButton addRow = new JButton("+");

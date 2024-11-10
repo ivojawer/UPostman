@@ -7,7 +7,7 @@ import persistance.RequestDao;
 import java.util.List;
 
 public class RequestFavoritingService {
-    private RequestDao requestDao;
+    private final RequestDao requestDao;
 
     public RequestFavoritingService(RequestDao requestDao) {
 
@@ -20,7 +20,7 @@ public class RequestFavoritingService {
         try {
             requestDao.save(favorite);
         } catch (PersistanceException e) {
-            throw new FavoriteRequestException(e);
+            throw new FavoriteRequestException("No se pudo guardar la request" + favorite.getURI() + " en favoritos");
         }
     }
 
@@ -28,7 +28,7 @@ public class RequestFavoritingService {
         try {
             return requestDao.findFavorites();
         } catch (PersistanceException e) {
-            throw new FavoriteRequestException(e);
+            throw new FavoriteRequestException("No se pudo obtener las requests favoritas");
         }
     }
 }

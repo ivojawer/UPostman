@@ -4,16 +4,16 @@ import domain.Header;
 import domain.Request;
 import domain.response.*;
 
-import javax.imageio.ImageIO;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class SendRequestService {
-    private RequestHistoryService requestHistoryService;
+    private final RequestHistoryService requestHistoryService;
 
     public SendRequestService(RequestHistoryService requestHistoryService) {
         this.requestHistoryService = requestHistoryService;
@@ -40,8 +40,10 @@ public class SendRequestService {
            req.registerSendTime();
            requestHistoryService.registerHistory(req);
            return buildResponse(response);
-       } catch (Exception e) {
-           throw new SendRequestException(e);
+       } catch (URISyntaxException | IllegalArgumentException e) {
+           throw new SendRequestException("La URL ingresada no es valida, revisa el formato");
+       } catch (Exception e){
+           throw new SendRequestException("Ocurrio un error intentando enviar la request:" + e.getMessage());
        }
 
     }

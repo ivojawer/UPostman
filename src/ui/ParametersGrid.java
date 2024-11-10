@@ -4,10 +4,9 @@ import domain.Parameter;
 import domain.Request;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class ParametersGrid extends NameValueGrid<Parameter> {
-    PanelManager panelManager;
+public class ParametersGrid extends KeyValueGrid<Parameter> {
+    private PanelManager panelManager;
 
     ParametersGrid(String title, PanelManager panelManager) {
         super(title);
