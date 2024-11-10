@@ -13,9 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PanelManager {
-    private RequestFavoritingService requestFavoritingService;
-    private SendRequestService sendRequestService;
-    private RequestHistoryService requestHistoryService;
+    private final RequestFavoritingService requestFavoritingService;
+    private final SendRequestService sendRequestService;
+    private final RequestHistoryService requestHistoryService;
 
     private Request currentRequest = new Request();
     private List<RequestObserver> observers = new ArrayList<>();
