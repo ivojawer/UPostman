@@ -12,7 +12,7 @@ public class LoadableRequest extends JPanel {
         this.request = request;
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        this.add(new JLabel(request.getMethod().name() + " " + request.getPath(), JLabel.CENTER));
+        this.add(new JLabel(request.getMethod().name() + " " + request.getURI(), JLabel.CENTER));
 
         JButton load = new JButton("Cargar");
         load.addActionListener(new ActionListener() {

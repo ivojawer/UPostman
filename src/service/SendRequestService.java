@@ -52,10 +52,9 @@ public class SendRequestService {
         String contentType = httpRes.headers().firstValue("Content-Type").orElse(null);
         if(contentType == null) return new TextResponse(httpRes.body(), new PlainTextFormatter());
         switch (contentType.split(";")[0]){
-            case "text/html":
-            case "text/plain":
-            case "text/xml": //ToDo make xml formatter
-                return new TextResponse(httpRes.body(), new PlainTextFormatter());
+            case "text/xml":
+            case "application/xml":
+                return new TextResponse(httpRes.body(), new XMLFormatter());
             case "image/jpeg":
             case "image/png":
                 return new ImageResponse(httpRes.body());
