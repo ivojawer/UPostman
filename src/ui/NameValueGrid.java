@@ -1,5 +1,8 @@
 package ui;
 
+import domain.Parameter;
+import domain.Request;
+
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -7,7 +10,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class NameValueGrid<T> extends JPanel {
+public abstract class NameValueGrid<T> extends JPanel implements RequestObserver {
     protected JPanel grid;
     protected final Integer columnsPerGrid = 3;
     protected Boolean listening = true;
@@ -89,7 +92,7 @@ public abstract class NameValueGrid<T> extends JPanel {
         };
         nameField.getDocument().addDocumentListener(listener);
         valueField.getDocument().addDocumentListener(listener);
-        
+
 
         row.add(nameField);
         row.add(valueField);
@@ -98,4 +101,15 @@ public abstract class NameValueGrid<T> extends JPanel {
         reactToChange();
         updateUI();
     }
+
+    @Override
+    public void newRequest(Request newRequest) {
+        grid.removeAll();
+        listening = false;
+        this.loadNewRequest(newRequest);
+        listening = true;
+        updateUI();
+    }
+
+    protected abstract void loadNewRequest(Request newRequest);
 }

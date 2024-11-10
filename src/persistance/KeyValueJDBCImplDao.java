@@ -9,12 +9,14 @@ public class KeyValueJDBCImplDao<T extends KeyValueEntity> extends JDBCDao imple
     String keyColumn;
     String valueColumn;
     String table;
+    JDBCRowMapper<T> mapper;
 
-    public KeyValueJDBCImplDao(Connection connection, String valueColumn, String keyColumn, String table){
+    public KeyValueJDBCImplDao(Connection connection, String valueColumn, String keyColumn, String table, JDBCRowMapper<T> mapper) {
         super(connection);
         this.valueColumn = valueColumn;
         this.keyColumn = keyColumn;
         this.table = table;
+        this.mapper = mapper;
     }
 
     public void save(T entity, Integer requestId) throws PersistanceException {
@@ -27,8 +29,8 @@ public class KeyValueJDBCImplDao<T extends KeyValueEntity> extends JDBCDao imple
         );
     }
 
-//    public List<T> findByRequest(Integer id){
-//        //ToDo ?
-//        return null;
-//    }
+    @Override
+    public List<T> findAll(Integer requestId) throws PersistanceException {
+        return findMany("SELECT * FROM " + table + " WHERE request_id = ?", mapper, requestId);
+    }
 }

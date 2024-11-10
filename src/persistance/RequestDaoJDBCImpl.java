@@ -1,7 +1,6 @@
 package persistance;
 
 import domain.Header;
-import domain.KeyValueEntity;
 import domain.Parameter;
 import domain.Request;
 import persistance.mappers.RequestMapper;
@@ -47,7 +46,6 @@ public class RequestDaoJDBCImpl extends JDBCDao implements RequestDao {
         for(Parameter p : request.getParameters()){
             parameterDao.save(p, request.getId());
         }
-
     }
 
     @Override
@@ -57,6 +55,24 @@ public class RequestDaoJDBCImpl extends JDBCDao implements RequestDao {
 
     @Override
     public List<Request> findFavorites() throws PersistanceException {
-        return this.findMany("SELECT * FROM Request WHERE favorite = true", new RequestMapper());
+        return this.findManyHydrated("SELECT * FROM Request WHERE favorite = true LIMIT 50");
+    }
+
+    @Override
+    public List<Request> findHistory() throws PersistanceException {
+        return this.findManyHydrated("SELECT * FROM Request WHERE last_executed IS NOT NULL ORDER BY last_executed DESC LIMIT 50");
+    }
+
+    private List<Request> findManyHydrated(String sql, Object... params) throws PersistanceException {
+        List<Request> reqs = this.findMany(sql, new RequestMapper(), params);
+        hydrateRelations(reqs);
+        return reqs;
+    }
+
+    private void hydrateRelations(List<Request> requests) throws PersistanceException {
+        for(Request r : requests){
+            r.setParameters(parameterDao.findAll(r.getId()));
+            r.setHeaders(headerDao.findAll(r.getId()));
+        }
     }
 }

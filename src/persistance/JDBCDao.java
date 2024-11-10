@@ -23,6 +23,7 @@ public class JDBCDao {
 
             for(int i = 1; i <= params.length; i++) {
                 if(params[i-1] instanceof Integer) preparedStatement.setInt(i, (Integer)params[i-1]);
+                else if(params[i-1] == null) preparedStatement.setObject(i, null);
                 else if(params[i-1] instanceof String) preparedStatement.setString(i, (String)params[i-1]);
                 else if(params[i-1] instanceof Double) preparedStatement.setDouble(i, (Double)params[i-1]);
                 else if(params[i-1] instanceof Float) preparedStatement.setFloat(i, (Float)params[i-1]);

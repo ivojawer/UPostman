@@ -6,7 +6,7 @@ import domain.Request;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ParametersGrid extends NameValueGrid<Parameter> implements RequestObserver {
+public class ParametersGrid extends NameValueGrid<Parameter> {
     PanelManager panelManager;
 
     ParametersGrid(String title, PanelManager panelManager) {
@@ -27,14 +27,10 @@ public class ParametersGrid extends NameValueGrid<Parameter> implements RequestO
     }
 
     @Override
-    public void newRequest(Request newRequest) {
-        grid.removeAll();
-        listening = false;
+    protected void loadNewRequest(Request newRequest) {
         for(Parameter param : newRequest.getParameters()){
             addRow(param.getName(), param.getValue());
         }
-        listening = true;
-        updateUI();
     }
 
 }

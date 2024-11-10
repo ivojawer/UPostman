@@ -1,35 +1,40 @@
 package ui;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParser;
+import domain.response.ImageResponse;
+import domain.response.TextResponse;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class Response extends JPanel {
-    JTextArea content;
+    JComponent content;
     public Response(){
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
         JPanel header = new JPanel(new FlowLayout(FlowLayout.LEFT));
         header.add(new JLabel("Response"));
-        header.add(new JComboBox<>(new String[]{"JSON", "XML"}));
-
-        content = new JTextArea();
-        content.setLineWrap(true);
-        content.setText("");
-        content.setEditable(false);
-        content.setPreferredSize(new Dimension(300, 900));
-
         add(header);
-        add(new JScrollPane(content));
+
+        addContent(new TextResponse(""));
     }
 
-    public void setContent(String newContent){
-        // ToDo strategy con combobox
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    public void setContent(domain.response.Response response){
+        remove(1);
+        this.addContent(response);
+    }
 
-        content.setText(gson.toJson(JsonParser.parseString(newContent)));
+    public void addContent(domain.response.Response response){
+        if(response.isText()){
+            content = new ResponseText(((TextResponse)response).getText());
+        } else {
+            content = new JLabel(new ImageIcon(((ImageResponse)response).getImage()));
+        }
+        add(new JScrollPane(content));
+        updateUI();
+
+    }
+
+    public void clear(){
+        setContent(new TextResponse(""));
     }
 }

@@ -131,4 +131,21 @@ public class Request {
     public void setId(Integer id) {
         this.id = id;
     }
+
+    public void setLastSent(LocalDateTime lastSent) {
+        this.lastSent = lastSent;
+    }
+
+    /**
+     * Makes a copy of a request without it's meta-state (id, favorite, lastSent)
+     */
+    public Request copy(){
+        Request request = new Request();
+        request.setMethod(method);
+        request.setPath(path);
+        request.setHeaders(headers);
+        request.setParameters(parameters);
+        request.setBody(body);
+        return request;
+    }
 }

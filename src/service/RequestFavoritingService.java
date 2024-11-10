@@ -3,9 +3,7 @@ package service;
 import domain.Request;
 import persistance.PersistanceException;
 import persistance.RequestDao;
-import ui.FavoriteRequest;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class RequestFavoritingService {
@@ -16,33 +14,21 @@ public class RequestFavoritingService {
         this.requestDao = requestDao;
     }
 
-    public void markAsFavorite(Request request) throws FavoriteRequestException {
-        request.setAsFavorite();
+    public void addToFavorites(Request request) throws FavoriteRequestException {
+        Request favorite = request.copy();
+        favorite.setAsFavorite();
         try {
-            requestDao.save(request);
+            requestDao.save(favorite);
         } catch (PersistanceException e) {
             throw new FavoriteRequestException(e);
         }
     }
 
-    public void removeFromFavorites(Request request) {
-
-    }
-
     public List<Request> getFavorites() throws FavoriteRequestException {
-        List<Request> favorites = new ArrayList<>();
-        for(int i = 0; i<5; i++){
-            Request req =new Request();
-            req.setPath("www.hola.com");
-            favorites.add(req);
+        try {
+            return requestDao.findFavorites();
+        } catch (PersistanceException e) {
+            throw new FavoriteRequestException(e);
         }
-
-        return favorites;
-
-//        try {
-//            return requestDao.findFavorites();
-//        } catch (PersistanceException e) {
-//            throw new FavoriteRequestException(e);
-//        }
     }
 }

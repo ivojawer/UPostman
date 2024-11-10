@@ -1,7 +1,6 @@
 package domain;
 
 public class Parameter implements KeyValueEntity{
-    private Integer requestId;
     private String name;
     private String value;
 
@@ -29,10 +28,6 @@ public class Parameter implements KeyValueEntity{
         }
 
 
-    }
-
-    public void setValue(String value) {
-        this.value = value;
     }
 
     public String getName() {

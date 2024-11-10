@@ -2,7 +2,11 @@ package service;
 
 import domain.Header;
 import domain.Request;
+import domain.response.*;
 
+import javax.imageio.ImageIO;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -16,7 +20,7 @@ public class SendRequestService {
     }
 
 
-    public String send(Request req) {
+    public Response send(Request req) throws SendRequestException {
        try {
            HttpRequest.Builder builder = HttpRequest.newBuilder(new URI(req.getURI()));
 
@@ -28,18 +32,36 @@ public class SendRequestService {
 
            HttpRequest httpReq = builder.build();
 
-           HttpResponse<String> response = HttpClient.newHttpClient().send(
+           HttpResponse<InputStream> response = HttpClient.newHttpClient().send(
                httpReq,
-               HttpResponse.BodyHandlers.ofString()
+               HttpResponse.BodyHandlers.ofInputStream()
            );
 
            req.registerSendTime();
            requestHistoryService.registerHistory(req);
-
-           return response.body();
+           return buildResponse(response);
        } catch (Exception e) {
-           //ToDo
-           throw new RuntimeException(e);
+           throw new SendRequestException(e);
        }
+
     }
+
+   private Response buildResponse(HttpResponse<InputStream> httpRes) throws IOException {
+        String contentType = httpRes.headers().firstValue("Content-Type").orElse(null);
+        if(contentType == null) return new TextResponse(httpRes.body(), new PlainTextFormatter());
+        switch (contentType.split(";")[0]){
+            case "text/html":
+            case "text/plain":
+            case "text/xml": //ToDo make xml formatter
+                return new TextResponse(httpRes.body(), new PlainTextFormatter());
+            case "image/jpeg":
+            case "image/png":
+                return new ImageResponse(httpRes.body());
+            case "application/json":
+                return new TextResponse(httpRes.body(), new JSONFormatter());
+            default:
+                return new TextResponse(httpRes.body(), new PlainTextFormatter());
+        }
+
+   }
 }

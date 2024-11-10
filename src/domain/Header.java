@@ -1,7 +1,6 @@
 package domain;
 
 public class Header implements KeyValueEntity {
-    private Integer requestId;
     private final String key;
     private String value;
 
